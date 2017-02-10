@@ -1,0 +1,21 @@
+{
+  "APIs": {
+    "Discord": {
+      "Token": ""
+    },
+    "Twitter": {
+      "consumerKey": "",
+      "consumerSecret": "",
+      "AccessToken": "",
+      "SecretToken": ""
+    }
+  },
+  "Config": {
+    "Discord": {
+      "Channels": []
+    },
+    "Twitter": {
+      "Users": []
+    }
+  }
+}

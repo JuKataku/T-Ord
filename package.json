@@ -1,0 +1,16 @@
+{
+  "name": "T-ORD",
+  "version": "0.0.3",
+  "description": "Discord bot for Tweet / RT",
+  "main": "t-ord.js",
+  "scripts": {
+    "start": "node t-ord.js",
+    "dev": "nodemon t-ord.js --ignore 'conf.json'"
+  },
+  "author": "JuJoue / SoRiz",
+  "dependencies": {
+    "discord.io": "^2.4.2",
+    "jsonfile": "^2.4.0",
+    "twit": "^2.2.5"
+  }
+}
