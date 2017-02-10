@@ -1,5 +1,5 @@
 /*
-    TORD for Tweet from discORD
+    T-ORD for Tweet from discORD
       -- jsonfile --
 */
 
