@@ -19,6 +19,10 @@ $ npm install
 $ npm run start
 ```
 
+### Prochaine version
+
+Ajout de loop "search" avec certain paramettre pour automatiquement RT suivant ces conditions.
+
 ### Déso / pas Déso
 
 Je suis une bille en anglais, alors si une personne a envie de ce faire le traduction ... Enjoy bro ! ;)
