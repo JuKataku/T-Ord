@@ -13,14 +13,19 @@ var uptimeBOT = {
     // Function UPTIME
 function uptime(callback) {
   var uptime = Math.round( (new Date().getTime() - uptimeBOT.initDate) /1000 )
-  var days    =  Math.floor( uptime /60/60/24 )
-  var hours   =  Math.floor( (uptime - (days *60*60*24)) /60/60 )
-  var minutes =  Math.floor( (uptime - ( hours *60*60 ) - (days *60*60*24)) /60/60 )
-  var secs    =  uptime - ( minutes * 60) - ( hours *60*60 ) - (days *60*60*24)
-  if (days > 0) {
-    callback("Day " + days + " [" + hours + ":" + minutes + ":" + secs + "]")
+  var dd = Math.floor( uptime /60/60/24 )
+  var hh = Math.floor( (uptime - (dd *60*60*24)) /60/60 )
+  var mm = Math.floor( (uptime - ( hh *60*60 ) - (dd *60*60*24)) /60 )
+  var sec = uptime - ( mm * 60) - ( hh *60*60 ) - (dd *60*60*24)
+
+  if (hh < 10) {hh = "0" + hh}
+  if (mm < 10) {mm = "0" + mm}
+  if (sec < 10) {sec = "0" + sec}
+
+  if (dd > 0) {
+    callback("Day " + dd + " [" + hh + ":" + mm + ":" + sec + "]")
   } else {
-    callback("[" + hours + ":" + minutes + ":" + secs + "]")
+    callback("[" + hh + ":" + mm + ":" + sec + "]")
   }
 }
 
