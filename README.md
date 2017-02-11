@@ -25,7 +25,7 @@ $ npm run start
   - Le propritaire du discord doit !PERMIT DISCORD le salon créer au dessus.
 
 **Ce que T-Ord ne sais pas faire :**
-  - Créer le SecretToken et SecretToken pour Twitter, vous devez vous faire votre propre serveur oAuth.
+  - Créer le SecretToken et AccessToken pour Twitter, vous devez vous faire votre propre serveur oAuth.
   - Faire le café ... bien dommage, j'en aurai besoin. :'(
 
 ### Patch Note
