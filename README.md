@@ -4,6 +4,7 @@ Petit bot basé sur Discord.io pour permettre d'envoyer des TWEET (avec image si
 
 ### Prérequis
 
+<<<<<<< HEAD
 > - Nodejs (dev en v6.9.1)
 > - App Twitter --> https://apps.twitter.com/
 > - App Discord --> https://discordapp.com/developers/applications/me
@@ -13,12 +14,24 @@ Petit bot basé sur Discord.io pour permettre d'envoyer des TWEET (avec image si
 > - Remplacer le fichier conf_DIST.json en conf.json
 > - Remplisser la partie "APIs" du json
 
+=======
+  - Nodejs (dev en v6.9.1)
+  - App Twitter --> https://apps.twitter.com/
+  - App Discord --> https://discordapp.com/developers/applications/me
+
+### Installation
+
+  - Remplacer le fichier conf_DIST.json en conf.json
+  - Remplisser la partie "APIs" du json
+  
+>>>>>>> origin/master
 ```sh
 $ cd T-Ord
 $ npm install
 $ npm run start
 ```
 
+<<<<<<< HEAD
 > - Inviter le bot Discord dans le Serveur/Guilde :  (Uniquement le proprio du bot/app peut le faire)
 >      https://discordapp.com/oauth2/authorize?&client_id=YYYY&scope=bot (remplacer YYYY pour le Client_ID du bot)
 > - Manager un groupe d'utilisateur pour un seul salon (exemple 'groupe twitter, #twitter')
@@ -42,6 +55,11 @@ Ce que T-Ord ne sais pas faire :
 > - Ajout de loop "search" avec certain paramettre pour automatiquement RT suivant ces conditions.
 > - Lister et Manager ces recherches
 > - Passer T-Ord en multi-sessions pour manager plusieurs discord/tweeter en même temps.
+=======
+### Prochaine version
+
+Ajout de loop "search" avec certain paramettre pour automatiquement RT suivant ces conditions.
+>>>>>>> origin/master
 
 ### Déso / pas Déso
 
