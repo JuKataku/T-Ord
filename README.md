@@ -30,12 +30,14 @@ $ npm run start
 
 ### Patch Note
 
-> **0.0.3:**
-> - Première version publique
-
 > **0.0.4:**
 > - Suppression de la commande !GLOBAL (juste une oublie avant la publication)
 > - Ajout de la commande !UPTIME et !UPTIME FULL pour savoir combien de reconnexion il y a eu
+
+> **0.0.3:**
+> - Première version publique
+
+
 
 ### Roadmap
 
