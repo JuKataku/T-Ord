@@ -5,6 +5,26 @@
 
 const Discord = require('discord.io')
 
+var uptimeBOT = {
+  initDate : new Date().getTime(),
+  reconnection : 0
+}
+
+    // Function UPTIME
+function uptime(callback) {
+  var uptime = Math.round( (new Date().getTime() - uptimeBOT.initDate) /1000 )
+  var days    =  Math.floor( uptime /60/60/24 )
+  var hours   =  Math.floor( (uptime - (days *60*60*24)) /60/60 )
+  var minutes =  Math.floor( (uptime - ( hours *60*60 ) - (days *60*60*24)) /60/60 )
+  var secs    =  uptime - ( minutes * 60) - ( hours *60*60 ) - (days *60*60*24)
+  if (days > 0) {
+    callback("Day " + days + " [" + hours + ":" + minutes + ":" + secs + "]")
+  } else {
+    callback("[" + hours + ":" + minutes + ":" + secs + "]")
+  }
+}
+
+
 const T = require('./twit')
 
 function init(token, callback) {
@@ -22,32 +42,40 @@ function init(token, callback) {
 
   bot.on('message', function(user, userID, channelID, message, event) {
 
-      // uniquement si nous avons un message de la forme !COMMAND
-    if( message[0] == '!') {
+    if( message[0] == '!') {  // uniquement si nous avons un message de la forme !COMMAND
 
       var command = message.slice(1, ( (message.indexOf(' ') != -1) ? message.indexOf(' '):message.length ))
       var option = message.slice(command.length+2, message.length)
 
 
-      if (command.toUpperCase() === "GLOBAL" && global.TORD.Config.Discord.Channels.includes(channelID)) { // ONLY DEV
-        callback(global.TORD)
+        //  UPTIME
+      if (command.toUpperCase() === "UPTIME" && global.TORD.Config.Discord.Channels.includes(channelID)) {
+        uptime(function(uptime){
+          if (option.toUpperCase() === "FULL") {
+            var resMES = `${uptime} || ${uptimeBOT.reconnection} reconnection`
+          } else {
+            var resMES = uptime
+          }
+          bot.sendMessage({
+            to: channelID,
+            message: "```Uptime " + resMES + "```"
+          })
+        })
       }
 
-              /*
-                  HELP
-              */
+
+        //  HELP
       if (command.toUpperCase() === "HELP") {
         if (userID == bot.servers[ bot.channels[channelID].guild_id ].owner_id || global.TORD.Config.Discord.Channels.includes(channelID) ) {
           bot.sendMessage({
             to: channelID,
-            message: "```" + helpMESG + "```"
+            message: "```" + helpMESG + " ```"
           })
         }
       }
 
-              /*
-                  PERMIT
-              */
+
+        //  PERMIT
       if (command.toUpperCase() === "PERMIT") {
 
 
@@ -79,9 +107,7 @@ function init(token, callback) {
       }
 
 
-              /*
-                  REVOKE
-              */
+        //  REVOKE
       if (command.toUpperCase() === "REVOKE") {
 
         if (option.toUpperCase() === "DISCORD" && userID == bot.servers[ bot.channels[channelID].guild_id ].owner_id) {
@@ -102,9 +128,8 @@ function init(token, callback) {
 
       }
 
-              /*
-                  TWEET
-              */
+
+        //  TWEET
       if (command.toUpperCase() === "TWEET" && global.TORD.Config.Discord.Channels.includes(channelID) ) {
 
         if (event.d.attachments) {
@@ -161,9 +186,8 @@ function init(token, callback) {
         }
       }
 
-              /*
-                  RETWEET
-              */
+
+        //  RT
       if (command.toUpperCase() === "RT" && global.TORD.Config.Discord.Channels.includes(channelID) ) {
 
         if (option == '') {
@@ -189,9 +213,8 @@ function init(token, callback) {
         }
       }
 
-              /*
-                  DESTROY TWEET
-              */
+
+        //  DESTROY
       if (command.toUpperCase() === "DESTROY" && global.TORD.Config.Discord.Channels.includes(channelID) ) {
 
         if (option == '') {
@@ -223,6 +246,7 @@ function init(token, callback) {
   bot.on('disconnect', function(errMsg, code) {     // EN CAS DE DISCONNECT (un peu brutasse, mais fonctionnel)
     console.log(`   -- Reconnection du Bot Discord.`)
     bot.connect()
+    uptimeBOT.reconnection++
   })
 
 }
@@ -233,6 +257,9 @@ module.exports = {
 
 var helpMESG = `Toutes les commandes ne sont pas sensible à la casse. ( !HELP = !help = !Help)
 
+!HELP
+  pour avoir ce message (lol ?)
+
 !PERMIT pour donner des droits en fonction des services
   |--> DISCORD pour autoriser le bot à tweet ou RT sur CE salon (only owner)
   |--> TWITTER @username pour ajouter l'écoute sur cet utilisateur
@@ -242,9 +269,17 @@ var helpMESG = `Toutes les commandes ne sont pas sensible à la casse. ( !HELP =
   |--> TWITTER @username pour supprimer l\'écoute sur cet utilisateur
 
 !TWEET votre message
-  pour envoyer un tweet (soon avec des images)
+  pour envoyer un tweet
+    (attention, il n'est pas possible de faire de Tweet avec plusieurs images)
 
 !RT url du tweet
-  pour demander au bot de RT un tweet en question
+  pour RT un tweet
 
-En cas de bug --> @JuJoueA `
+!DESTROY url du tweet
+  pour effacer un tweet
+
+!UPTIME
+  pour savoir depuis combien de temps la session du serveur tourne
+  |--> FULL pour avoir plus d'info
+
+En cas de bug --> @JuJoueA / @SoRiz_`
