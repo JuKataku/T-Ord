@@ -140,7 +140,7 @@ function init(token, callback) {
         //  TWEET
       if (command.toUpperCase() === "TWEET" && global.TORD.Config.Discord.Channels.includes(channelID) ) {
 
-        if (event.d.attachments) {
+        if (event.d.attachments.length > 0) {
 
           if (option) {
             var msgREQ = option + ' --' + user
@@ -153,7 +153,7 @@ function init(token, callback) {
             if (cb.id_str) {
               bot.sendMessage({
                 to: channelID,
-                message: Markdown('TWEET : ' + bot.fixMessage(msgREQ) + ' https://twitter.com/' + cb.user.screen_name + '/status/' + cb.id_str)
+                message: Markdown('TWEET : ' + bot.fixMessage(msgREQ)) + ' https://twitter.com/' + cb.user.screen_name + '/status/' + cb.id_str
               })
             } else {
               bot.sendMessage({
@@ -179,7 +179,7 @@ function init(token, callback) {
               if (data.id_str) {
                 bot.sendMessage({
                   to: channelID,
-                  message: Markdown('TWEET : ' + bot.fixMessage(msgREQ) + ' https://twitter.com/' + data.user.screen_name + '/status/' + data.id_str)
+                  message: Markdown('TWEET : ' + bot.fixMessage(msgREQ)) + ' https://twitter.com/' + data.user.screen_name + '/status/' + data.id_str
                 })
               } else {
                 bot.sendMessage({
