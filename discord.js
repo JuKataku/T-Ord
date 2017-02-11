@@ -10,6 +10,10 @@ var uptimeBOT = {
   reconnection : 0
 }
 
+    // Function Markdown
+function Markdown(str) {
+  return global.TORD.Config.Markdown + "" + ( !str ? str = this : str = str) + "" + global.TORD.Config.Markdown
+}
     // Function UPTIME
 function uptime(callback) {
   var uptime = Math.round( (new Date().getTime() - uptimeBOT.initDate) /1000 )
@@ -18,15 +22,11 @@ function uptime(callback) {
   var mm = Math.floor( (uptime - ( hh *60*60 ) - (dd *60*60*24)) /60 )
   var sec = uptime - ( mm * 60) - ( hh *60*60 ) - (dd *60*60*24)
 
-  if (hh < 10) {hh = "0" + hh}
-  if (mm < 10) {mm = "0" + mm}
-  if (sec < 10) {sec = "0" + sec}
+  callback( (dd < 0 ? "Day " + dd +  + " " : "") + "[" +
+    (hh < 10 ? "0" + hh : hh) + ":" +
+    (mm < 10 ? "0" + mm : mm) + ":" +
+    (sec < 10 ? "0" + sec : sec) + "]" )
 
-  if (dd > 0) {
-    callback("Day " + dd + " [" + hh + ":" + mm + ":" + sec + "]")
-  } else {
-    callback("[" + hh + ":" + mm + ":" + sec + "]")
-  }
 }
 
 
@@ -35,6 +35,9 @@ const T = require('./twit')
 function init(token, callback) {
 
   T.init()
+
+    // prototype .discordRES
+  Number.prototype.Markdown = Markdown
 
   var bot = new Discord.Client({
     token: token.Discord.Token,
@@ -47,7 +50,7 @@ function init(token, callback) {
 
   bot.on('message', function(user, userID, channelID, message, event) {
 
-    if( message[0] == '!') {  // uniquement si nous avons un message de la forme !COMMAND
+    if( message[0] == '!') {
 
       var command = message.slice(1, ( (message.indexOf(' ') != -1) ? message.indexOf(' '):message.length ))
       var option = message.slice(command.length+2, message.length)
@@ -63,7 +66,7 @@ function init(token, callback) {
           }
           bot.sendMessage({
             to: channelID,
-            message: "```Uptime " + resMES + "```"
+            message: Markdown("Uptime " + resMES)
           })
         })
       }
@@ -74,7 +77,7 @@ function init(token, callback) {
         if (userID == bot.servers[ bot.channels[channelID].guild_id ].owner_id || global.TORD.Config.Discord.Channels.includes(channelID) ) {
           bot.sendMessage({
             to: channelID,
-            message: "```" + helpMESG + " ```"
+            message: Markdown(helpMESG)
           })
         }
       }
@@ -88,14 +91,14 @@ function init(token, callback) {
           if ( !global.TORD.Config.Discord.Channels.includes(channelID) ) {
             bot.sendMessage({
               to: channelID,
-              message: '`Le Salon #' + bot.channels[channelID].name + ' est configuré pour tweeter`'
+              message: Markdown('Le Salon #' + bot.channels[channelID].name + ' est configuré pour tweeter')
             })
             callback(`PERMIT DISCORD #${bot.channels[channelID].name}`, {service : 'Discord', act : 'permit', channel: channelID})
 
           } else {
             bot.sendMessage({
               to: channelID,
-              message: '`Ce Salon #' + bot.channels[channelID].name + ' est déjà configuré pour tweeter`'
+              message: Markdown('Ce Salon #' + bot.channels[channelID].name + ' est déjà configuré pour tweeter')
             })
           }
         }
@@ -104,7 +107,7 @@ function init(token, callback) {
           var twitterUserName
           bot.sendMessage({
             to: channelID,
-            message: '`L\'utilisateur @' + bot.channels[channelID].name + ' a été ajouté`'
+            message: Markdown('L\'utilisateur @' + bot.channels[channelID].name + ' a été ajouté')
           })
           callback(`PERMIT TWITTER @${twitterUserName} on discord configuration`, {service : 'Twitter', act : 'permit', user: twitterUserName})
         }
@@ -118,7 +121,7 @@ function init(token, callback) {
         if (option.toUpperCase() === "DISCORD" && userID == bot.servers[ bot.channels[channelID].guild_id ].owner_id) {
           bot.sendMessage({
             to: channelID,
-            message: '`Le Salon #' + bot.channels[channelID].name + ' n\'est plus configuré pour tweeter`'
+            message: Markdown('Le Salon #' + bot.channels[channelID].name + ' n\'est plus configuré pour tweeter')
           })
           callback(`REVOKE DISCORD #${bot.channels[channelID].name}`, {service : 'Discord', act : 'revoke', channel: channelID})
         }
@@ -126,7 +129,7 @@ function init(token, callback) {
         if (option.toUpperCase() === "TWITTER" && userID == bot.servers[ bot.channels[channelID].guild_id ].owner_id) {
           bot.sendMessage({
             to: channelID,
-            message: '`L\'utilisateur @' + bot.channels[channelID].name + ' a été supprimé`'
+            message: Markdown('L\'utilisateur @' + bot.channels[channelID].name + ' a été supprimé')
           })
           callback(`REVOKE DISCORD #${bot.channels[channelID].name}`, {service : 'Twitter', act : 'revoke', user: twitterUserName})
         }
@@ -150,24 +153,24 @@ function init(token, callback) {
             if (cb.id_str) {
               bot.sendMessage({
                 to: channelID,
-                message: 'TWEET : `' + bot.fixMessage(msgREQ) + '` https://twitter.com/' + cb.user.screen_name + '/status/' + cb.id_str
+                message: Markdown('TWEET : ' + bot.fixMessage(msgREQ) + ' https://twitter.com/' + cb.user.screen_name + '/status/' + cb.id_str)
               })
             } else {
               bot.sendMessage({
                 to: channelID,
-                message: 'ERROR : `' + cb.errors[0].message + '`'
+                message: Markdown('ERROR : ' + cb.errors[0].message)
               })
             }
 
           })
 
         } else if (option == '') {
-          bot.sendMessage({ to: channelID, message: '`!TWEET message`' })
+          bot.sendMessage({ to: channelID, message: Markdown('!TWEET message') })
 
         } else {
           var msgREQ = option + ' --' + user
           if (msgREQ.length >= 140){
-            bot.sendMessage({ to: channelID, message: '`Message trop long`' })
+            bot.sendMessage({ to: channelID, message: Markdown('Message trop long') })
           } else {
             var msgREQ = option + ' --' + user
 
@@ -176,12 +179,12 @@ function init(token, callback) {
               if (data.id_str) {
                 bot.sendMessage({
                   to: channelID,
-                  message: 'TWEET : `' + bot.fixMessage(msgREQ) + '` https://twitter.com/' + data.user.screen_name + '/status/' + data.id_str
+                  message: Markdown('TWEET : ' + bot.fixMessage(msgREQ) + ' https://twitter.com/' + data.user.screen_name + '/status/' + data.id_str)
                 })
               } else {
                 bot.sendMessage({
                   to: channelID,
-                  message: 'ERROR : `' + data.errors[0].message + '`'
+                  message: Markdown('ERROR : ' + data.errors[0].message)
                 })
               }
 
@@ -205,12 +208,12 @@ function init(token, callback) {
               if (data.id_str) {
                 bot.sendMessage({
                   to: channelID,
-                  message: 'RT : `' + option
+                  message: Markdown('RT : ' + option)
                 })
               } else {
                 bot.sendMessage({
                   to: channelID,
-                  message: 'ERROR : ' + data.errors[0].message + '`'
+                  message: Markdown('ERROR : ' + data.errors[0].message)
                 })
               }
             })
@@ -232,12 +235,12 @@ function init(token, callback) {
               if (data.id_str) {
                 bot.sendMessage({
                   to: channelID,
-                  message: 'Tweet Effacé'
+                  message: Markdown('Tweet Effacé')
                 })
               } else {
                 bot.sendMessage({
                   to: channelID,
-                  message: 'ERROR : ' + data.errors[0].message + '`'
+                  message: Markdown('ERROR : ' + data.errors[0].message)
                 })
               }
             })
