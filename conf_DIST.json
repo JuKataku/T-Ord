@@ -7,16 +7,21 @@
       "consumerKey": "",
       "consumerSecret": "",
       "AccessToken": "",
-      "SecretToken": ""
+      "SecretToken": "",
+      "screen_name": ""
     }
   },
   "Config": {
     "Discord": {
-      "Channels": []
+      "Channels": {
+        "Announcement" : "",
+        "Listen": []
+      }
     },
     "Twitter": {
-      "Users": []
-    },
-    "Markdown": "*"
+      "Users": [],
+      "Streams": {},
+      "AppendMSG": "--"
+    }
   }
 }

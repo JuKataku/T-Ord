@@ -1,6 +1,7 @@
 /*
     T-ORD for Tweet from discORD
       -- twit --
+      /*
 */
 
 const fs = require('fs')
@@ -8,13 +9,21 @@ const https = require('https')
 const Twit = require('twit')
 var T
 
-function init() {
+function init(callback) {
   T = new Twit({
     consumer_key: global.TORD.APIs.Twitter.consumerKey,
     consumer_secret: global.TORD.APIs.Twitter.consumerSecret,
     access_token: global.TORD.APIs.Twitter.AccessToken,
     access_token_secret: global.TORD.APIs.Twitter.SecretToken
-    // timeout_ms: 60*1000  /* semblerait que ce soit lui qui soit à la source de bug/shutdown du script */
+  })
+  T.get('account/verify_credentials', { skip_status: true }).then(function (res) {
+    if (global.TORD.APIs.Twitter.screen_name != res.data.screen_name) {
+      global.TORD.APIs.Twitter.screen_name = res.data.screen_name
+      callback({act : 'update', 'screen_name' : res.data.screen_name})
+    }
+  })
+  stream(init, function(res){
+    console.log(res)
   })
 }
 
@@ -65,7 +74,6 @@ function uploadTWEET(msg, attachments, callback) {
     res.pipe(tmpIMG)
   })
 
-
 }
 
 function reTWEET(id, callback) {
@@ -80,6 +88,50 @@ function destroyTWEET(id, callback) {
   })
 }
 
+var TOStreams = {}
+
+function stream(act, name, track, callback) {
+
+  function loadSTREAM(name, track, callback) {
+    TOStreams[name] = T.stream('statuses/filter', { track: track })
+
+    TOStreams[name].on('tweet', function(tweet) {
+      callback({name : name, tweet: tweet})
+    })
+  }
+
+  if (act == 'status') {
+    callback = name
+    callback(TOStreams)
+  }
+
+  if (act == 'init') {
+    callback = name
+    if ( Object.keys(global.TORD.Config.Twitter.Streams).length > 0 ) {
+      for (var i = 0; i < Object.keys(global.TORD.Config.Twitter.Streams).length; i++ ) {
+        loadSTREAM(Object.keys(global.TORD.Config.Twitter.Streams)[i], global.TORD.Config.Twitter.Streams[Object.keys(global.TORD.Config.Twitter.Streams)[i]], function(res) {
+          callback(res)
+        })
+      }
+    } else {
+      callback(`on n'est rien à lancer`)
+    }
+  }
+
+  if (act == 'add') {
+    loadSTREAM(name, track, function(res) {
+      callback(res)
+    })
+  }
+
+  if (act == 'remove') {
+    callback = track
+    delete TOStreams[name]
+    callback(TOStreams)
+  }
+
+}
+
 
 
 module.exports = {
@@ -87,5 +139,6 @@ module.exports = {
   post : postTWEET,
   upload : uploadTWEET,
   rt : reTWEET,
-  destroy : destroyTWEET
+  destroy : destroyTWEET,
+  stream : stream
 }

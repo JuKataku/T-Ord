@@ -2,13 +2,6 @@
     T-ORD for Tweet from discORD
 */
 
-// DISCORD
-  /*  Il faut creer un bot discord
-        -> https://discordapp.com/developers/applications/me
-      Il faut inviter le nouveau bot à rejoindre le salon. Uniquement le proprio peut le faire
-        -> https://discordapp.com/oauth2/authorize?&client_id=YYYY&scope=bot
-            (remplacer YYYY pour le Client_ID du bot)  */
-
 global.TORD = {}
 
 const config = require('./config')
@@ -19,6 +12,7 @@ config('read', function(json){
   discord.init(global.TORD.APIs, function(cb, opts){
     console.log(cb)
     if (opts) {
+      console.log(` -- options --\n`, opts)
       manage(opts)
     }
   })
@@ -28,12 +22,17 @@ function manage(opts) {
   if (opts.service == 'Discord') {
 
     if (opts.act == 'permit' && opts.channel) {
-      global.TORD.Config.Discord.Channels.push(opts.channel)
+      global.TORD.Config.Discord.Channels.Listen.push(opts.channel)
+      config('update', function(err) { if (err) { console.log(err) } })
+    }
+
+    if (opts.act == 'announcement' && opts.channel) {
+      global.TORD.Config.Discord.Channels.Announcement = opts.channel
       config('update', function(err) { if (err) { console.log(err) } })
     }
 
     if (opts.act == 'revoke' && opts.channel) {
-      global.TORD.Config.Discord.Channels = global.TORD.Config.Discord.Channels.splice(opts.channel, 1)
+      global.TORD.Config.Discord.Channels.Listen.splice(global.TORD.Config.Discord.Channels.Listen.indexOf(opts.user), 1)
       config('update', function(err) { if (err) { console.log(err) } })
     }
 
@@ -41,13 +40,23 @@ function manage(opts) {
 
   if (opts.service == 'Twitter') {
 
-    if (opts.act == 'permit' && opts.user) {
+    if (opts.act == 'addUser' && opts.user) {
       global.TORD.Config.Twitter.Users.push(opts.user)
       config('update', function(err) { if (err) { console.log(err) } })
     }
 
-    if (opts.act == 'revoke' && opts.user) {
-      global.TORD.Config.Twitter.Users = global.TORD.Config.Twitter.Users.splice(opts.user, 1)
+    if (opts.act == 'removeUser' && opts.user) {
+      global.TORD.Config.Twitter.Users.splice(global.TORD.Config.Twitter.Users.indexOf(opts.user), 1)
+      config('update', function(err) { if (err) { console.log(err) } })
+    }
+
+    if (opts.act == 'addStream' && opts.name && opts.track) {
+      global.TORD.Config.Twitter.Streams[opts.name] = opts.track
+      config('update', function(err) { if (err) { console.log(err) } })
+    }
+
+    if (opts.act == 'removeStream' && opts.name) {
+      delete global.TORD.Config.Twitter.Streams[opts.name]
       config('update', function(err) { if (err) { console.log(err) } })
     }
 

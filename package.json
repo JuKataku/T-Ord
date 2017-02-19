@@ -1,7 +1,7 @@
 {
   "name": "T-ORD",
-  "version": "0.0.4",
-  "description": "Discord bot for Tweet / RT",
+  "version": "0.9.0",
+  "description": "Tweet / RT / Stream from Discord #Channel",
   "main": "t-ord.js",
   "scripts": {
     "start": "node t-ord.js",
