@@ -537,5 +537,5 @@ __**COMMANDES**__
 
 __**CONTACT / AIDE / BUG**__
 
-    Twitter : @JuJoueA / @SoRiz_
-    GitHub : SoRizz`
+    Twitter : @JuJoueA / @SOappIO
+    GitHub : SOappIO`
